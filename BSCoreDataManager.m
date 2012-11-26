@@ -1,23 +1,23 @@
 //
-//  XFCoreDataManager.m
+//  BSCoreDataManager.m
 //
 
-#import "XFCoreDataManager.h"
+#import "BSCoreDataManager.h"
 
 // should use your own file
-#define FILENAME @"test" 
+#define FILENAME @"Watch" 
 
-@implementation XFCoreDataManager
+@implementation BSCoreDataManager
 
 @synthesize managedObjectContext = __managedObjectContext;
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
 
-static XFCoreDataManager *sharedCoreDataManager = nil;
+static BSCoreDataManager *sharedCoreDataManager = nil;
 
-+ (XFCoreDataManager *)sharedManager {
++ (BSCoreDataManager *)sharedManager {
     if (!sharedCoreDataManager) {
-        sharedCoreDataManager = [[XFCoreDataManager alloc] init];
+        sharedCoreDataManager = [[BSCoreDataManager alloc] init];
     }
     return sharedCoreDataManager;
 }
