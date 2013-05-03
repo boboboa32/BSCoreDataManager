@@ -4,9 +4,6 @@
 
 #import "BSCoreDataManager.h"
 
-// should use your own file
-#define FILENAME @"Watch" 
-
 @implementation BSCoreDataManager
 
 @synthesize managedObjectContext = __managedObjectContext;
@@ -20,16 +17,6 @@ static BSCoreDataManager *sharedCoreDataManager = nil;
         sharedCoreDataManager = [[BSCoreDataManager alloc] init];
     }
     return sharedCoreDataManager;
-}
-
-- (id)init
-{
-    self = [super init];
-    if (self) {
-        // Initialization code here.
-    }
-    
-    return self;
 }
 
 - (void)saveContext
@@ -100,7 +87,7 @@ static BSCoreDataManager *sharedCoreDataManager = nil;
                                                                                     error:&error] mutableCopy];
     if (mutableFetchResults == nil) {
         // Handle the error.
-        //NSLog(@"FetchRequest error %@, %@", error, [error userInfo]);
+        NSLog(@"FetchRequest error %@, %@", error, [error userInfo]);
         abort();
     }
     
@@ -141,7 +128,7 @@ static BSCoreDataManager *sharedCoreDataManager = nil;
         return [results objectAtIndex:0];
     }
     else if ([results count] > 1) {
-        //NSLog(@"CoreDataManager getObjectOfClass error: object has more than one!");
+        NSLog(@"CoreDataManager getObjectOfClass error: object has more than one!");
         return [results objectAtIndex:0];
     }
     else {
@@ -181,13 +168,13 @@ static BSCoreDataManager *sharedCoreDataManager = nil;
     NSURL *mainDocumentURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory 
                                                                      inDomains:NSUserDomainMask] lastObject];
     
-    NSString *sqlFile = [NSString stringWithFormat:@"%@.sqlite", FILENAME];
+    NSString *sqlFile = [NSString stringWithFormat:@"%@.sqlite", self.modelName];
     NSURL *storeURL = [mainDocumentURL URLByAppendingPathComponent:sqlFile]; 
     NSError *error = nil;
     [[NSFileManager defaultManager] removeItemAtPath:storeURL.path error:&error];
     
     if (error) {
-        //NSLog(@"clearDatabase error %@, %@", error, [error userInfo]);
+        NSLog(@"clearDatabase error %@, %@", error, [error userInfo]);
         abort();
     }
     
@@ -221,7 +208,7 @@ static BSCoreDataManager *sharedCoreDataManager = nil;
         return __managedObjectModel;
     }
     
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:FILENAME withExtension:@"momd"]; 
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:self.modelName withExtension:@"momd"];
     __managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];    
     return __managedObjectModel;
 }
@@ -236,7 +223,7 @@ static BSCoreDataManager *sharedCoreDataManager = nil;
     NSURL *mainDocumentURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory 
                                                                      inDomains:NSUserDomainMask] lastObject];
     
-    NSString *sqlFile = [NSString stringWithFormat:@"%@.sqlite", FILENAME];
+    NSString *sqlFile = [NSString stringWithFormat:@"%@.sqlite", self.modelName];
     NSURL *storeURL = [mainDocumentURL URLByAppendingPathComponent:sqlFile]; 
     
     NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:  
@@ -247,10 +234,10 @@ static BSCoreDataManager *sharedCoreDataManager = nil;
     __persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
     if (![__persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error])
     {
-//        [self clearDatabase];
-//        [self persistentStoreCoordinator];
-        abort();
-    }    
+        [self clearDatabase];
+        [self persistentStoreCoordinator];
+//        abort();
+    }
     
     return __persistentStoreCoordinator;
 }
