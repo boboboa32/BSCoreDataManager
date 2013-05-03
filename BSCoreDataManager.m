@@ -32,14 +32,6 @@ static BSCoreDataManager *sharedCoreDataManager = nil;
     return self;
 }
 
-- (void) dealloc {
-    [__managedObjectContext release];
-    [__managedObjectModel release];
-    [__persistentStoreCoordinator release];
-    
-    [super dealloc];
-}
-
 - (void)saveContext
 {
     NSError *error = nil;
@@ -81,13 +73,10 @@ static BSCoreDataManager *sharedCoreDataManager = nil;
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
     [request setSortDescriptors:sortDescriptors];
     
-    [sortDescriptors release];
-    [sortDescriptor release];
     
     NSError *error = nil;
-    NSMutableArray *mutableFetchResults = [[[self.managedObjectContext executeFetchRequest:request 
-                                                                                    error:&error] mutableCopy] autorelease];
-    [request release];
+    NSMutableArray *mutableFetchResults = [[self.managedObjectContext executeFetchRequest:request 
+                                                                                    error:&error] mutableCopy];
     if (mutableFetchResults == nil) {
         // Handle the error.
         //NSLog(@"FetchRequest error %@, %@", error, [error userInfo]);
@@ -107,9 +96,8 @@ static BSCoreDataManager *sharedCoreDataManager = nil;
     [request setPredicate:predicate];
     
     NSError *error = nil;
-    NSMutableArray *mutableFetchResults = [[[self.managedObjectContext executeFetchRequest:request 
-                                                                                    error:&error] mutableCopy] autorelease];
-    [request release];
+    NSMutableArray *mutableFetchResults = [[self.managedObjectContext executeFetchRequest:request 
+                                                                                    error:&error] mutableCopy];
     if (mutableFetchResults == nil) {
         // Handle the error.
         //NSLog(@"FetchRequest error %@, %@", error, [error userInfo]);
@@ -203,11 +191,8 @@ static BSCoreDataManager *sharedCoreDataManager = nil;
         abort();
     }
     
-    [__managedObjectContext release];
     __managedObjectContext = nil;
-    [__managedObjectModel release];
     __managedObjectModel = nil;
-    [__persistentStoreCoordinator release];
     __persistentStoreCoordinator = nil;
 }
 
